@@ -7,10 +7,10 @@ import numpy as np
 class NetData:
 
 
-    def __init__(self, path_filename, S_base=100e3, V_base=13.8):
+    def __init__(self, path_filename, S_base=100, V_base=13.8):
         
         self.data = pd.ExcelFile(path_filename)
-        self.S_base = S_base
+        self.S_base = S_base*1e3
         self.V_base = V_base
         self.Ybar = None
 
@@ -59,7 +59,7 @@ class NetData:
         Convert Dictionary Data in ohm to p.u.
         -------------------------------------
         Args:
-            power_pw = 'dict' with data in kW
+            z_ohm = 'dict' with data in Ohm
             mva = 'int' base power in MVA
             kv = 'int' power transformer voltage level
         -------------------------------------
@@ -115,8 +115,6 @@ class NetData:
         ReactivePower = self.get_data(DBAR_data,2)
         P_gen = self.get_data(DBAR_data,3)
         Q_gen = self.get_data(DBAR_data,4)
-        V = self.get_data(DBAR_data,5)
-        teta = self.get_data(DBAR_data,6)
 
         nodes = list(range(1,len(from_bus)+2))
 
@@ -140,8 +138,8 @@ class NetData:
             tails.append(to_bus[pos-1])
 
         for loc in Bus_Location:
-            P[loc] = ActivePower[loc-1]
-            Q[loc] = ReactivePower[loc-1]
+            P[loc] = float(ActivePower[loc-1])
+            Q[loc] = float(ReactivePower[loc-1])
             P_gen_limit[loc] = P_gen[loc-1]
             Q_gen_limit[loc] = Q_gen[loc-1]
 
@@ -165,8 +163,8 @@ class NetData:
         P_gen_limit = self.convert_power_pu(P_gen_limit,self.S_base) #Capacidade Ger Max
         Q = self.convert_power_pu(Q,self.S_base) # Reativo
         Q_gen_limit = self.convert_power_pu(Q_gen_limit,self.S_base) #Capacidade de Reativo
-        R = self.convert_ohm_pu(R,self.S_base,self.V_base) # Resistencia
-        X = self.convert_ohm_pu(X,self.S_base,self.V_base) # Reatancia
+        R = self.convert_ohm_pu(R,mva=self.S_base,kv=self.V_base) # Resistencia
+        X = self.convert_ohm_pu(X,mva=self.S_base,kv=self.V_base) # Reatancia
 
         
         return branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx
@@ -175,10 +173,21 @@ class NetData:
 
 
 if __name__ == '__main__':
-    import pprint
-    branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx = NetData('DATA/teste.xlsx',100e3,13.8).get_system_data()
+    from pprint import pprint, pformat
+    branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx = NetData('DATA/teste.xlsx').get_system_data()
     variables = [branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx]
-    name = ['Barras', 'Linhas', 'P', 'Q', 'R', 'X', 'P_gen_limit', 'Q_gen_limit', 'Cx']
+    name = ['Linhas', 'Barras', 'P', 'Q', 'R', 'X', 'P_gen_limit', 'Q_gen_limit', 'Cx']
     for v in range(len(variables)):
         print(name[v])
-        pprint.pprint(variables[v])
+        pprint(variables[v])
+    
+    with open('outputs/System_Data.json','w') as f:
+        f.write(pformat({"Linhas": branches}))
+        f.write(pformat({"Linhas": nodes}))
+        f.write(pformat({"P": P}))
+        f.write(pformat({"Q": Q}))
+        f.write(pformat({"R": R}))
+        f.write(pformat({"X": X}))
+        f.write(pformat({"PGEN_limit": P_gen_limit}))
+        f.write(pformat({"QGEN_limit": Q_gen_limit}))
+        f.write(pformat({"Cx": Cx}))
