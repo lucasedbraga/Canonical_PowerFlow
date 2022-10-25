@@ -27,7 +27,7 @@ class SOCP_PF:
         self.modelo  = pe.ConcreteModel()
         # Model name
         self.modelo.name = '*** Fluxo de Carga SOCP ***'
-        # Propriedades
+        # Propriedadesa
         mva = self.S_base
         solver = self.solver
 
@@ -204,6 +204,7 @@ class SOCP_PF:
 
 
 if __name__ == '__main__':
-    PF = SOCP_PF('DATA/teste.xlsx',S_base=100e-3, V_base=12.66)
+    PF = SOCP_PF('DATA/teste.xlsx',S_base=100, V_base=13.8)
+    # PF = SOCP_PF('DATA/teste.xlsx',S_base=100e-3, V_base=12.66)
     PF.solve(print_output=True)
     

@@ -89,39 +89,39 @@
 
 7 Var Declarations
     I : Size=4, Index=I_index
-        Key       : Lower : Value             : Upper  : Fixed : Stale : Domain
-        (1, 1, 0) :     0 :               0.0 : 250000 : False :  True :  Reals
-        (1, 2, 0) :     0 : 1683.213569560214 : 250000 : False : False :  Reals
-        (2, 1, 0) :     0 : 70.01018805909355 : 250000 : False : False :  Reals
-        (2, 2, 0) :     0 :               0.0 : 250000 : False :  True :  Reals
+        Key       : Lower : Value              : Upper  : Fixed : Stale : Domain
+        (1, 1, 0) :     0 :                0.0 : 250000 : False :  True :  Reals
+        (1, 2, 0) :     0 : 0.3461538663586654 : 250000 : False : False :  Reals
+        (2, 1, 0) :     0 : 0.5601375567839367 : 250000 : False : False :  Reals
+        (2, 2, 0) :     0 :                0.0 : 250000 : False :  True :  Reals
     P_ij : Size=4, Index=P_ij_index
         Key       : Lower : Value               : Upper : Fixed : Stale : Domain
         (1, 1, 0) :  None :                 0.0 :  None : False :  True :  Reals
-        (1, 2, 0) :  None :                 0.4 :  None : False : False :  Reals
-        (2, 1, 0) :  None : 0.19293401352771786 :  None : False : False :  Reals
+        (1, 2, 0) :  None : 0.39999999998865454 :  None : False : False :  Reals
+        (2, 1, 0) :  None : 0.07328447376867463 :  None : False : False :  Reals
         (2, 2, 0) :  None :                 0.0 :  None : False :  True :  Reals
     Perdas : Size=2, Index=Perdas_index
         Key    : Lower : Value                  : Upper : Fixed : Stale : Domain
-        (1, 0) :  None : -9.749397722034357e-09 :  None : False : False :  Reals
+        (1, 0) :  None : -9.999090909090892e-09 :  None : False : False :  Reals
         (2, 0) :  None :                    0.4 :  None : False : False :  Reals
     Pgen : Size=2, Index=Pgen_index
         Key    : Lower : Value                  : Upper : Fixed : Stale : Domain
-        (1, 0) :     0 : -9.749397722034357e-09 : 100.0 : False : False :  Reals
+        (1, 0) :     0 : -9.999090909090902e-09 : 100.0 : False : False :  Reals
         (2, 0) :     0 :                    0.0 :     0 : False : False :  Reals
     Q_ij : Size=4, Index=Q_ij_index
         Key       : Lower : Value                 : Upper : Fixed : Stale : Domain
         (1, 1, 0) :  None :                   0.0 :  None : False :  True :  Reals
-        (1, 2, 0) :  None : 8.119621910522878e-30 :  None : False : False :  Reals
-        (2, 1, 0) :  None :    0.9646700676385979 :  None : False : False :  Reals
+        (1, 2, 0) :  None : 8.207070441405253e-13 :  None : False : False :  Reals
+        (2, 1, 0) :  None :    0.3766146452816849 :  None : False : False :  Reals
         (2, 2, 0) :  None :                   0.0 :  None : False :  True :  Reals
     Qgen : Size=2, Index=Qgen_index
         Key    : Lower : Value              : Upper : Fixed : Stale : Domain
-        (1, 0) :     0 : 1.9999999512530116 : 100.0 : False : False :  Reals
+        (1, 0) :     0 : 0.3461538663578447 : 100.0 : False : False :  Reals
         (2, 0) :     0 :                0.0 :     0 : False : False :  Reals
     V : Size=2, Index=V_index
         Key    : Lower  : Value              : Upper  : Fixed : Stale : Domain
-        (1, 0) : 0.9025 : 0.9310309027195223 : 1.1025 : False : False :  Reals
-        (2, 0) : 0.9025 : 0.9287495524057797 : 1.1025 : False : False :  Reals
+        (1, 0) : 0.9025 : 1.1025000110202727 : 1.1025 : False : False :  Reals
+        (2, 0) : 0.9025 : 0.9024999900047271 : 1.1025 : False : False :  Reals
 
 1 Objective Declarations
     objective : Size=1, Index=None, Active=True
@@ -130,9 +130,9 @@
 
 5 Constraint Declarations
     active_power : Size=2, Index=active_power_index, Active=True
-        Key : Lower : Body                                                     : Upper : Active
-          1 :   0.0 : Pgen[1,0] - 0.0002376406639563352*I[1,2,0] + P_ij[1,2,0] :   0.0 :   True
-          2 :   0.0 :                            Pgen[2,0] + 0.4 - P_ij[1,2,0] :   0.0 :   True
+        Key : Lower : Body                                                   : Upper : Active
+          1 :   0.0 : Pgen[1,0] - 0.19999999999999996*I[1,2,0] + P_ij[1,2,0] :   0.0 :   True
+          2 :   0.0 :                          Pgen[2,0] + 0.4 - P_ij[1,2,0] :   0.0 :   True
     branch_flow : Size=2, Index=branch_flow_index, Active=True
         Key : Lower : Body                                              : Upper : Active
           1 :  -Inf : P_ij[1,2,0]**2 + Q_ij[1,2,0]**2 - V[1,0]*I[1,2,0] :   0.0 :   True
@@ -142,12 +142,12 @@
           1 :   0.0 :         Perdas[1,0] - Pgen[1,0] :   0.0 :   True
           2 :   0.0 : Perdas[2,0] - (Pgen[2,0] + 0.4) :   0.0 :   True
     reactive_power : Size=2, Index=reactive_power_index, Active=True
-        Key : Lower : Body                                                    : Upper : Active
-          1 :   0.0 : Qgen[1,0] - 0.001188203319781676*I[1,2,0] + Q_ij[1,2,0] :   0.0 :   True
-          2 :   0.0 :                                 Qgen[2,0] - Q_ij[1,2,0] :   0.0 :   True
+        Key : Lower : Body                                                  : Upper : Active
+          1 :   0.0 : Qgen[1,0] - 0.9999999999999999*I[1,2,0] + Q_ij[1,2,0] :   0.0 :   True
+          2 :   0.0 :                               Qgen[2,0] - Q_ij[1,2,0] :   0.0 :   True
     voltage_drop : Size=2, Index=voltage_drop_index, Active=True
-        Key : Lower : Body                                                                                                                           : Upper : Active
-          1 :   0.0 : V[1,0] - (V[2,0] - 2*(0.0002376406639563352*P_ij[1,2,0] + 0.001188203319781676*Q_ij[1,2,0]) + 1.4683002143058036e-06*I[1,2,0]) :   0.0 :   True
-          2 :   0.0 : V[2,0] - (V[1,0] - 2*(0.0002376406639563352*P_ij[2,1,0] + 0.001188203319781676*Q_ij[2,1,0]) + 1.4683002143058036e-06*I[2,1,0]) :   0.0 :   True
+        Key : Lower : Body                                                                                                                   : Upper : Active
+          1 :   0.0 : V[1,0] - (V[2,0] - 2*(0.19999999999999996*P_ij[1,2,0] + 0.9999999999999999*Q_ij[1,2,0]) + 1.0399999999999998*I[1,2,0]) :   0.0 :   True
+          2 :   0.0 : V[2,0] - (V[1,0] - 2*(0.19999999999999996*P_ij[2,1,0] + 0.9999999999999999*Q_ij[2,1,0]) + 1.0399999999999998*I[2,1,0]) :   0.0 :   True
 
 42 Declarations: P_ij_index_0 P_ij_index_1 P_ij_index_2 P_ij_index P_ij Q_ij_index_0 Q_ij_index_1 Q_ij_index_2 Q_ij_index Q_ij I_index_0 I_index_1 I_index_2 I_index I V_index_0 V_index_1 V_index V Pgen_index_0 Pgen_index_1 Pgen_index Pgen Qgen_index_0 Qgen_index_1 Qgen_index Qgen Perdas_index_0 Perdas_index_1 Perdas_index Perdas active_power_index active_power reactive_power_index reactive_power voltage_drop_index voltage_drop branch_flow_index branch_flow perdas_index perdas objective

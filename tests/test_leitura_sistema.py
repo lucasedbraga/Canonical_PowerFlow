@@ -9,8 +9,36 @@ def test_NetData_class():
     assert obj.V_base == 13.8
     assert obj.Ybar == None
 
-# def test_get_system_data():
-#     branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx = NetData('DATA/teste.xlsx').get_system_data()
+def test_get_system_data():
+    def arredonda_ohm_pu(dict_value):
+        for key in dict_value.keys():
+            for k, v in dict_value[key].items():
+                dict_value[key][k] = round(v, 2)
+        return dict_value
+
+
+    expected = {
+        "Linhas": {1:(1,2)},
+        "Barras": [1,2],
+        "P": {1:0, 2:-0.4},
+        "Q": {1:0,2:0},
+        "R": {1: {1: 0.0, 2: 0.2}, 2: {1: 00.2, 2: 0.0}},
+        "X": {1: {1:0.0, 2: 1}, 2: {1: 1, 2: 0.0}},
+        "P_gen_limit": {1:100,2:0},
+        "Q_gen_limit": {1:100,2:0},
+    }
+
+    branches, nodes, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx = NetData('DATA/teste.xlsx').get_system_data()
+    
+    assert branches == expected["Linhas"]
+    assert nodes == expected["Barras"]
+    assert P == expected["P"]
+    assert Q == expected["Q"]
+    assert arredonda_ohm_pu(R) == expected["R"]
+    assert arredonda_ohm_pu(X) == expected["X"]
+    assert P_gen_limit == expected["P_gen_limit"]
+    assert Q_gen_limit == expected["Q_gen_limit"]
+
 
 def test_convert_power_pu():
     obj = NetData('DATA/teste.xlsx')
