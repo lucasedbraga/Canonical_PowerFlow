@@ -183,7 +183,7 @@ if __name__ == '__main__':
     
     with open('outputs/System_Data.json','w') as f:
         f.write(pformat({"Linhas": branches}))
-        f.write(pformat({"Linhas": nodes}))
+        f.write(pformat({"Barras": nodes}))
         f.write(pformat({"P": P}))
         f.write(pformat({"Q": Q}))
         f.write(pformat({"R": R}))
