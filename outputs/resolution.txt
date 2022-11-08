@@ -1,0 +1,134 @@
+20 Set Declarations
+    I_index : Size=1, Index=None, Ordered=True
+        Key  : Dimen : Domain              : Size : Members
+        None :     2 : I_index_0*I_index_1 :    4 : {(1, 1), (1, 2), (2, 1), (2, 2)}
+    I_index_0 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    I_index_1 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    P_ij_index : Size=1, Index=None, Ordered=True
+        Key  : Dimen : Domain                    : Size : Members
+        None :     2 : P_ij_index_0*P_ij_index_1 :    4 : {(1, 1), (1, 2), (2, 1), (2, 2)}
+    P_ij_index_0 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    P_ij_index_1 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    P_tiu_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    Perdas_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    Pgen_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    Q_ij_index : Size=1, Index=None, Ordered=True
+        Key  : Dimen : Domain                    : Size : Members
+        None :     2 : Q_ij_index_0*Q_ij_index_1 :    4 : {(1, 1), (1, 2), (2, 1), (2, 2)}
+    Q_ij_index_0 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    Q_ij_index_1 : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    Qgen_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    V_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    balanco_p_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    balanco_perdas_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    balanco_q_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    inequation_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    ptiu_perdas_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+    queda_tensao_index : Size=1, Index=None, Ordered=Insertion
+        Key  : Dimen : Domain : Size : Members
+        None :     1 :    Any :    2 : {1, 2}
+
+8 Var Declarations
+    I : Size=4, Index=I_index
+        Key    : Lower : Value               : Upper  : Fixed : Stale : Domain
+        (1, 1) :     0 :                 0.0 : 250000 : False :  True :  Reals
+        (1, 2) :     0 : 0.27598602509118303 : 250000 : False : False :  Reals
+        (2, 1) :     0 :  0.1641119984188937 : 250000 : False : False :  Reals
+        (2, 2) :     0 :                 0.0 : 250000 : False :  True :  Reals
+    P_ij : Size=4, Index=P_ij_index
+        Key    : Lower : Value                 : Upper : Fixed : Stale : Domain
+        (1, 1) :  None :                   0.0 :  None : False :  True :  Reals
+        (1, 2) :  None :   0.18077585723754586 :  None : False : False :  Reals
+        (2, 1) :  None : -0.017263020766651333 :  None : False : False :  Reals
+        (2, 2) :  None :                   0.0 :  None : False :  True :  Reals
+    P_tiu : Size=2, Index=P_tiu_index
+        Key : Lower : Value                : Upper : Fixed : Stale : Domain
+          1 :  None :  0.03808414189288901 :  None : False : False :  Reals
+          2 :  None : 0.013466374009706223 :  None : False : False :  Reals
+    Perdas : Size=2, Index=Perdas_index
+        Key : Lower : Value : Upper : Fixed : Stale : Domain
+          1 :  None :   0.0 :  None : False :  True :  Reals
+          2 :  None :   0.0 :  None : False :  True :  Reals
+    Pgen : Size=2, Index=Pgen_index
+        Key : Lower : Value               : Upper : Fixed : Stale : Domain
+          1 :     0 : 0.19600951399470146 : 100.0 : False : False :  Reals
+          2 :     0 :                 0.0 :     0 : False : False :  Reals
+    Q_ij : Size=4, Index=Q_ij_index
+        Key    : Lower : Value                  : Upper : Fixed : Stale : Domain
+        (1, 1) :  None :                    0.0 :  None : False :  True :  Reals
+        (1, 2) :  None : 3.7878788485366215e-13 :  None : False : False :  Reals
+        (2, 1) :  None :   -0.08631510383325668 :  None : False : False :  Reals
+        (2, 2) :  None :                    0.0 :  None : False :  True :  Reals
+    Qgen : Size=2, Index=Qgen_index
+        Key : Lower : Value              : Upper : Fixed : Stale : Domain
+          1 :     0 : 0.0761682837861568 : 100.0 : False : False :  Reals
+          2 :     0 :                0.0 :     0 : False : False :  Reals
+    V : Size=2, Index=V_index
+        Key : Lower  : Value             : Upper  : Fixed : Stale : Domain
+          1 : 0.9025 : 0.929505725739157 : 1.1025 : False : False :  Reals
+          2 : 0.9025 : 1.081031083772142 : 1.1025 : False : False :  Reals
+
+1 Objective Declarations
+    objective : Size=1, Index=None, Active=True
+        Key  : Active : Sense    : Expression
+        None :   True : minimize : P_tiu[1] + P_tiu[2]
+
+6 Constraint Declarations
+    balanco_p : Size=2, Index=balanco_p_index, Active=True
+        Key : Lower : Body                                                  : Upper : Active
+          1 :   0.0 : Pgen[1] - (0.19999999999999996*I[1,2]**2 + P_ij[1,2]) :   0.0 :   True
+          2 :   0.0 :                             Pgen[2] - 0.4 + P_ij[1,2] :   0.0 :   True
+    balanco_perdas : Size=2, Index=balanco_perdas_index, Active=True
+        Key : Lower : Body                                                         : Upper : Active
+          1 :   0.0 : 0.9999999999999999*P_ij[1,2] - 0.19999999999999996*Q_ij[1,2] :   0.0 :   True
+          2 :   0.0 : 0.9999999999999999*P_ij[2,1] - 0.19999999999999996*Q_ij[2,1] :   0.0 :   True
+    balanco_q : Size=2, Index=balanco_q_index, Active=True
+        Key : Lower : Body                                                 : Upper : Active
+          1 :   0.0 : Qgen[1] - (0.9999999999999999*I[1,2]**2 + Q_ij[1,2]) :   0.0 :   True
+          2 :   0.0 :                                  Qgen[2] + Q_ij[1,2] :   0.0 :   True
+    inequation : Size=2, Index=inequation_index, Active=True
+        Key : Lower : Body                                           : Upper : Active
+          1 :  -Inf : P_ij[1,2]**2 + Q_ij[1,2]**2 - P_tiu[1]*V[1]**2 :   0.0 :   True
+          2 :  -Inf : P_ij[2,1]**2 + Q_ij[2,1]**2 - P_tiu[2]*V[2]**2 :   0.0 :   True
+    ptiu_perdas : Size=2, Index=ptiu_perdas_index, Active=True
+        Key : Lower : Body                                                        : Upper : Active
+          1 :   0.0 : 0.19999999999999996*I[1,2]**2 - 0.3999999999999999*P_tiu[1] :   0.0 :   True
+          2 :   0.0 : 0.19999999999999996*I[2,1]**2 - 0.3999999999999999*P_tiu[2] :   0.0 :   True
+    queda_tensao : Size=2, Index=queda_tensao_index, Active=True
+        Key : Lower : Body                                                                                                            : Upper : Active
+          1 :   0.0 : V[2] - (V[1] + 2*(0.19999999999999996*P_ij[1,2] + 0.9999999999999999*Q_ij[1,2]) + 1.0399999999999998*I[1,2]**2) :   0.0 :   True
+          2 :   0.0 : V[1] - (V[2] + 2*(0.19999999999999996*P_ij[2,1] + 0.9999999999999999*Q_ij[2,1]) + 1.0399999999999998*I[2,1]**2) :   0.0 :   True
+
+35 Declarations: P_ij_index_0 P_ij_index_1 P_ij_index P_ij Q_ij_index_0 Q_ij_index_1 Q_ij_index Q_ij I_index_0 I_index_1 I_index I V_index V Pgen_index Pgen Qgen_index Qgen Perdas_index Perdas P_tiu_index P_tiu balanco_p_index balanco_p balanco_q_index balanco_q queda_tensao_index queda_tensao balanco_perdas_index balanco_perdas ptiu_perdas_index ptiu_perdas inequation_index inequation objective
