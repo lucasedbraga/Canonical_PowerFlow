@@ -21,102 +21,99 @@ class SOCP_PF:
         linhas, barras, P, Q, R, X, P_gen_limit, Q_gen_limit, Cx = NetData(path_filename=self.data_dir,S_base=self.S_base,V_base=self.V_base).get_system_data()
 
     # Criando o modelo
-        
+
         # Pyomo Model     
         self.modelo  = pe.ConcreteModel()
         # Model name
         self.modelo.name = '*** Fluxo de Carga SOCP ***'
-        # Propriedadesa
+        # Propriedades
         mva = self.S_base
         solver = self.solver
 
 
-    # Criando Variaveis de Decisao
+        self.modelo.time = self.times
+        self.modelo.nodes = barras
+        self.modelo.branches = linhas
 
-        self.modelo.P_ij = pe.Var(barras, barras, domain=pe.Reals)  # purchased power
-        self.modelo.Q_ij = pe.Var(barras, barras, domain=pe.Reals)  # purchased power
-        self.modelo.I = pe.Var(barras, barras, domain=pe.Reals)
-        self.modelo.V = pe.Var(barras, domain=pe.Reals)
-        self.modelo.Pgen = pe.Var(barras, domain=pe.Reals)
-        self.modelo.Qgen = pe.Var(barras, domain=pe.Reals)
-        self.modelo.Perdas = pe.Var(barras, domain=pe.Reals)
-        self.modelo.P_tiu = pe.Var(barras, domain=pe.Reals)
-
+        self.modelo.P_ij = pe.Var(self.modelo.nodes, self.modelo.nodes, self.modelo.time, domain=pe.Reals)  # purchased power
+        self.modelo.Q_ij = pe.Var(self.modelo.nodes, self.modelo.nodes, self.modelo.time, domain=pe.Reals)  # purchased power
+        self.modelo.I = pe.Var(self.modelo.nodes, self.modelo.nodes, self.modelo.time, domain=pe.Reals)
+        self.modelo.V = pe.Var(self.modelo.nodes, self.modelo.time, domain=pe.Reals)
+        self.modelo.Pgen = pe.Var(self.modelo.nodes, self.modelo.time, domain=pe.Reals)
+        self.modelo.Qgen = pe.Var(self.modelo.nodes, self.modelo.time, domain=pe.Reals)
+        self.modelo.Perdas = pe.Var(self.modelo.nodes, self.modelo.time, domain=pe.Reals)
 
         # _________ Variables initialization _________
-        for i in barras:
-            for j in barras:
-                self.modelo.P_ij[i,j] = 0.0
-                self.modelo.Q_ij[i,j] = 0.0
-                self.modelo.I[i,j] = 0.0
+        for t in self.modelo.time:
+            for i in self.modelo.nodes:
+                for j in self.modelo.nodes:
+                    self.modelo.P_ij[i,j,t] = 0.0
+                    self.modelo.Q_ij[i,j,t] = 0.0
+                    self.modelo.I[i,j,t] = 0.0
 
-            self.modelo.V[i] = 0.0
-            self.modelo.Pgen[i] = 0.0
-            self.modelo.Qgen[i] = 0.0
-            self.modelo.Perdas[i] = 0.0
-            self.modelo.P_tiu[i] = 0.0
-    
+                self.modelo.V[i,t] = 0.0
+                self.modelo.Pgen[i,t] = 0.0
+                self.modelo.Qgen[i,t] = 0.0
+        
         # _________ Variable Bounds _________
-        for i in barras:
-            for j in barras:
-                self.modelo.I[i,j].setub(500 ** 2)    # Square of the current magnitude
-                self.modelo.I[i,j].setlb(0 ** 2)
-        
-            self.modelo.V[i].setlb(0.95 ** 2)    # Square of the voltage magnitude
-            self.modelo.V[i].setub(1.05 ** 2)
-
-            self.modelo.Pgen[i].setlb(0)
-            self.modelo.Pgen[i].setub(P_gen_limit[i])
-
-            self.modelo.Qgen[i].setlb(0)
-            self.modelo.Qgen[i].setub(Q_gen_limit[i])
-        
-        self.modelo.balanco_p = pe.ConstraintList()
-        self.modelo.balanco_q = pe.ConstraintList()
-        self.modelo.queda_tensao = pe.ConstraintList()
-        self.modelo.balanco_perdas = pe.ConstraintList()
-        self.modelo.ptiu_perdas = pe.ConstraintList()     
-        self.modelo.inequation = pe.ConstraintList()
-           
-
-        for i in barras:
-            # _________ (1) Pg - Pd - (somaPij + Pperdas) == 0 ________________________________________________________
-            self.modelo.balanco_p.add(self.modelo.Pgen[i] - P[i] - ( 
-                                sum(R[i][j] * self.modelo.I[i,j]**2 for j in barras if j>i if Cx[i][j] == 1) + 
-                                sum(self.modelo.P_ij[i,j] for j in barras if j>i if Cx[i][j] == 1) -
-                                sum(self.modelo.P_ij[k,i] for k in barras if k<i if Cx[k][i] == 1))
-                                ==0)
-
-
-            # _________ (2) Qg - Qd - (somaQij + Qperdas) == 0 ________________________________________________________
-            self.modelo.balanco_q.add(self.modelo.Qgen[i ] - Q[i] - (
-                                sum(X[i][j] * self.modelo.I[i,j]**2 for j in barras if j>i if Cx[i][j] == 1) + 
-                                sum(self.modelo.Q_ij[i,j ] for j in barras if j>i if Cx[i][j] == 1) -
-                                sum(self.modelo.Q_ij[k,i ] for k in barras if k<i if Cx[k][i] == 1))
-                                == 0)
+        for t in self.modelo.time:
+            for i in self.modelo.nodes:
+                for j in self.modelo.nodes:
+                    self.modelo.I[i,j,t].setub(500 ** 2)    # Square of the current magnitude
+                    self.modelo.I[i,j,t].setlb(0 ** 2)
             
+                self.modelo.V[i,t].setlb(0.95 ** 2)    # Square of the voltage magnitude
+                self.modelo.V[i,t].setub(1.05 ** 2)
 
-        for i in barras:
-            for j in barras:
-                if Cx[i][j] == 1:
+                self.modelo.Pgen[i,t].setlb(0)
+                self.modelo.Pgen[i,t].setub(P_gen_limit[i])
 
-                    # _________ (3) 2(R*P + X*Q) + (R^2 + X^2). I^2 - somaV^2 == 0 ______________________________________
-                    self.modelo.queda_tensao.add(0 == self.modelo.V[j] - (self.modelo.V[i] + (2 * (R[i][j] * self.modelo.P_ij[i,j] + X[i][j] * self.modelo.Q_ij[i,j])) +
-                                ((R[i][j]) ** 2 + (X[i][j]) ** 2) * self.modelo.I[i,j]**2))
+                self.modelo.Qgen[i,t].setlb(0)
+                self.modelo.Qgen[i,t].setub(Q_gen_limit[i])
 
-                    # _________ (4) CXP - CRQ ==  0 ________________________________________________________
-                    self.modelo.balanco_perdas.add(X[i][j] * self.modelo.P_ij[i,j]  - R[i][j] * self.modelo.Q_ij[i,j] == 0)
 
-                    # _________ (5) R*i^2 = 2*R*~P ___________________________________________________________________
-                    self.modelo.ptiu_perdas.add(R[i][j]*self.modelo.I[i,j]**2 - 2*R[i][j]*self.modelo.P_tiu[i] == 0)
 
-                    # _________ (6) ~P*V^2 >= P^2 + Q^2 ___________________________________________________________________
-                    self.modelo.inequation.add((self.modelo.P_tiu[i] * (self.modelo.V[i]**2)) >= (self.modelo.P_ij[i,j] ** 2) + (self.modelo.Q_ij[i,j] ** 2))
+        self.modelo.active_power = pe.ConstraintList()
+        self.modelo.reactive_power = pe.ConstraintList()
+        self.modelo.voltage_drop = pe.ConstraintList()
+        self.modelo.branch_flow = pe.ConstraintList()
+        self.modelo.perdas = pe.ConstraintList()
+        
+        for t in self.modelo.time:
+            for i in self.modelo.nodes:
+                self.modelo.perdas.add(self.modelo.Perdas[i,t] == self.modelo.Pgen[i,t]  - P[i])
+                
+
+            for i in self.modelo.nodes:
+                # _________ (1) P = load - Pres + somaP + r * I^2 ________________________________________________________
+                self.modelo.active_power.add(self.modelo.Pgen[i,t] - P[i] - 
+                                    sum(R[i][j] * self.modelo.I[i,j,t] for j in self.modelo.nodes if j>i if Cx[i][j] == 1) + 
+                                    sum(self.modelo.P_ij[i,j,t] for j in self.modelo.nodes if j>i if Cx[i][j] == 1) == 
+                                    sum(self.modelo.P_ij[k,i,t] for k in self.modelo.nodes if k<i if Cx[k][i] == 1))
+
+
+                # _________ (2) Q = load - Qres + somaQ + r * I^2 ________________________________________________________
+                self.modelo.reactive_power.add(self.modelo.Qgen[i,t] - Q[i] - 
+                                sum(X[i][j] * self.modelo.I[i,j,t] for j in self.modelo.nodes if j>i if Cx[i][j] == 1) + 
+                                sum(self.modelo.Q_ij[i,j,t] for j in self.modelo.nodes if j>i if Cx[i][j] == 1) == 
+                                sum(self.modelo.Q_ij[k,i,t] for k in self.modelo.nodes if k<i if Cx[k][i] == 1))
+
+            for i in self.modelo.nodes:
+                for j in self.modelo.nodes:
+                    if Cx[i][j] == 1:
+                        # _________ (3) Vm^2 - 2(r x P + x x Q) + (r^2 + x^2). I^2 = Vn ^2 ______________________________________
+                        self.modelo.voltage_drop.add(self.modelo.V[i,t] == self.modelo.V[j,t] - 2 * (R[i][j] * self.modelo.P_ij[i,j,t] + X[i][j] * self.modelo.Q_ij[i,j,t]) +
+                                            ((R[i][j]) ** 2 + (X[i][j]) ** 2) * self.modelo.I[i,j,t] )
+
+                        # _________ (4) V^2 x I^2 = P^2 + Q^2 ___________________________________________________________________
+                        self.modelo.branch_flow.add((self.modelo.V[i,t]) * self.modelo.I[i,j,t] >= (self.modelo.P_ij[i,j,t] ** 2) + (self.modelo.Q_ij[i,j,t] ** 2))
+
+
 
 
     # Resolução do Problema
 
-        obj = sum(self.modelo.P_tiu[i]  for i in barras)
+        obj = sum(10*self.modelo.Pgen[i,t] for i in self.modelo.nodes for t in self.modelo.time)
         self.modelo.objective = pe.Objective(sense=pe.minimize, expr=obj)
 
         # Solve the problem
@@ -124,27 +121,29 @@ class SOCP_PF:
         result = solver.solve(self.modelo)
 
 
-         # Results
-        V = {i:0 for i in barras}
-        I = {i:{j:0 for j in barras} for i in barras}
-        P_ij = {i:{j:0 for j in barras} for i in barras}
-        Q_ij = {i:{j:0 for j in barras} for i in barras}
-        Pgen = {i:0 for i in barras}
-        Perdas = {i:0 for i in barras}
-
+        # Results
+        # Results
+        V = {t:{i:0 for i in self.modelo.nodes} for t in self.modelo.time}
+        I = {t:{i:{j:0 for j in self.modelo.nodes} for i in self.modelo.nodes} for t in self.modelo.time}
+        P_ij = {t:{i:{j:0 for j in self.modelo.nodes} for i in self.modelo.nodes} for t in self.modelo.time}
+        Q_ij = {t:{i:{j:0 for j in self.modelo.nodes} for i in self.modelo.nodes} for t in self.modelo.time}
+        Pgen = {t:{i:0 for i in self.modelo.nodes} for t in self.modelo.time}
+        Perdas = {t:{i:0 for i in self.modelo.nodes} for t in self.modelo.time}
         #region Pass results
-
-        for i in barras:
-            V[i] = pe.value(self.modelo.V[i]) ** 0.5
-            Pgen[i] = pe.value(self.modelo.Pgen[i]) * mva
-            Perdas[i] = pe.value(self.modelo.Perdas[i] * mva)
-        
-            for j in linhas:
-                I[i][j] = pe.value(self.modelo.I[i,j]) ** 0.5
-                P_ij[i][j] = pe.value(self.modelo.P_ij[i,j]) * mva
-                Q_ij[i][j] = pe.value(self.modelo.Q_ij[i,j]) * mva
+        for t in self.modelo.time:
+            for i in self.modelo.nodes:
+                V[t][i] = pe.value(self.modelo.V[i,t]) ** 0.5
+                Pgen[t][i] = pe.value(self.modelo.Pgen[i,t]) * mva
+                Perdas[t][i] = pe.value(self.modelo.Perdas[i,t] * mva)
+            
+                for j in self.modelo.branches:
+                    I[t][i][j] = pe.value(self.modelo.I[i,j,t]) ** 0.5
+                    P_ij[t][i][j] = pe.value(self.modelo.P_ij[i,j,t]) * mva
+                    Q_ij[t][i][j] = pe.value(self.modelo.Q_ij[i,j,t]) * mva
         #endregion
-        P_ijt= sum(P_ij[i][j] for i in barras for j in barras)
+        P_ijt = {t:0 for t in self.modelo.time}
+        for t in self.modelo.time:
+            P_ijt[t] = sum(P_ij[t][i][j] for i in self.modelo.nodes for j in self.modelo.nodes)
 
         
         #region Output
@@ -209,7 +208,7 @@ class SOCP_PF:
 
 
 if __name__ == '__main__':
-    PF = SOCP_PF('DATA/teste.xlsx',S_base=100, V_base=13.8)
-    # PF = SOCP_PF('DATA/teste.xlsx',S_base=100e-3, V_base=12.66)
+    #PF = SOCP_PF('DATA/teste.xlsx',S_base=100, V_base=13.8)
+    PF = SOCP_PF('DATA/ieee-33.xlsx',S_base=100e-3, V_base=12.66)
     PF.solve(print_output=True)
     
